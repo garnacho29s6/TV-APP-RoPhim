@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoPhim - Kết quả tìm kiếm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background-color: #0f1115;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 30px;
+      background-color: #14161c;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    header .logo {
+      font-size: 40px;
+      font-weight: bold;
+      color:  #facc15;
+    }
+    .search-section {
+      padding: 20px 30px;
+    }
+    .search-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .filter-buttons button {
+      background: #1e1f26;
+      border: 1px solid #333;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      padding: 0 30px;
+    }
+    .movie {
+      background-color: #1c1f26;
+      border-radius: 8px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .movie:hover {
+      transform: scale(1.03);
+    }
+    .movie img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+    .movie-title {
+      font-size: 14px;
+      padding: 10px;
+      min-height: 48px;
+    }
+   .pagination {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-btn {
+      padding: 6px 12px;
+      background: #1e1f26;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .page-btn:hover {
+      background: #facc15;
+      color: black;
+    }
+    .page-btn.active {
+      background: #facc15;
+      color: black;
+      font-weight: bold;
+    }
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #14161c;
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+    }
+    .movie-grid {
+      display: grid;
+	  grid-template-columns: repeat(auto-fill, 18vh);
+	  gap: 29px;
+	  overflow-x: unset;
+	  overflow-x: unset;   /* Bỏ scroll ngang */
+  	  scroll-snap-type: none; /* Không cần snap */
+    }
+    .movie-item {
+      background: #1c1f26;
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 140px;
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      margin-top: 10px;
+    }
+    .movie-item img {
+      width: 100%;
+      object-fit: cover;
+    }
+    .movie-title {
+      padding: 10px;
+      font-size: 14px;
+    }
+    .movie-item {
+		margin-right: 20px
+	  margin: 0 6px;
+	  flex-shrink: 0;       /* Không cho co lại khi thiếu chỗ */
+	  overflow: hidden;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: flex-start;
+	  align-items: center;
+	  background: #111;
+	  border-radius: 8px;
+	  padding: 6px;
+	  transition: transform 0.2s;
+	}
+	.movie-item img {
+		width: 100%;
+		height: auto;
+	}
+	.search-bar {
+      flex: 1;
+      max-width: 800px;
+      height: 48px;
+      margin: 0 30px;
+    }
+    .search-bar input {
+      width: 100%;
+      font-size: 33px;
+      padding: 8px 16px;
+      border-radius: 5px;
+      border: none;
+      background: #1c1f26;
+      color: white;
+    }
+    .user-btn {
+      background: #facc15;
+      color: black;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-weight: bold;
+      font-size: 33px;
+    }
+    #loader {
+	  position: fixed;
+	  z-index: 9999;
+	  background: #0f1115;
+	  width: 100%;
+	  height: 100%;
+	  top: 0;
+	  left: 0;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	  color: white;
+	  font-size: 30px;
+	  transition: opacity 0.5s ease;
+	}
+	
+	.spinner {
+	  width: 60px;
+	  height: 60px;
+	  border: 6px solid #333;
+	  border-top: 6px solid #facc15;
+	  border-radius: 50%;
+	  animation: spin 1s linear infinite;
+	  margin-bottom: 20px;
+	}
+	
+	@keyframes spin {
+	  to {
+	    transform: rotate(360deg);
+	  }
+	}
+	.progress-container {
+	  width: 80%;
+	  height: 12px;
+	  background-color: #333;
+	  border-radius: 6px;
+	  overflow: hidden;
+	  margin-top: 20px;
+	}
+	
+	.progress-bar {
+	  height: 100%;
+	  width: 0%;
+	  background-color: #facc15;
+	  transition: width 0.2s;
+	}
+	#loader {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  background: #0f1115;
+	  color: white;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  z-index: 9999;
+	  transition: opacity 0.5s;
+	}
+	.movie-item:focus {
+		/* padding: 2px; */
+		border: 3px solid white;
+		z-index: 99;
+	}
+	.page-btn:focus {
+		/* padding: 2px; */
+		border: 3px solid white;
+	}
+  </style>
+</head>
+<body>
+	<div id="loader">
+	  <div class="spinner"></div>
+	   <p id="loadingText">Đang tải dữ liệu... 0%</p>
+	  <div class="progress-container">
+	    <div class="progress-bar" id="progressBar"></div>
+	  </div>
+	</div>
+  <header>
+    <div class="logo">Netlfex</div>
+    <div tabindex="0" class="search-bar selection">
+    	<input id="search-box" type="text" placeholder="Tìm kiếm phim, diễn viên..." style="padding: 8px; border-radius: 5px; border: none;" />
+    </div>
+    <button class="user-btn" style="padding: 8px 16px; background: #facc15; color: black; border: none; border-radius: 5px; font-weight: bold;">Hùng Nguyễn</button>
+  </header>
+
+  <div class="search-section">
+    <div class="search-title" id="tit"></div>
+    <div class="filter-buttons">
+      <button>Phim</button>
+      <button>Diễn viên</button>
+    </div>
+    <div class="movie-grid" id="movieGrid"></div>
+
+    <div class="pagination" id="pagination">
+		<div id="pre" tabindex="0" class="page-btn selection">←</div>
+      <div tabindex="0" class="page-btn active selection">1</div>
+      <div id="next" tabindex="0" class="page-btn selection">2</div>
+      <div id="next" tabindex="0" class="page-btn selection">→</div>
+    </div>
+  </div>
+
+  <footer>
+    RoPhim &copy; 2024 - Xem phim miễn phí chất lượng cao
+  </footer>
+
+  <script src="search.js">
+  </script>
+</body>
+</html>

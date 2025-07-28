@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xem phim - Trường Ca Hành</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: black;
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #video {
+      position: absolute;
+      z-index: 1;
+      width: 100vw;
+      height: 100vh;
+      background-color: transparent;
+    }
+
+    #loader {
+      position: fixed;
+      z-index: 30;
+      background: #0f1115;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 30px;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      width: 100px;
+      height: 100px;
+      border: 6px solid #333;
+      border-top: 6px solid #facc15;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .progress-container {
+      width: 80%;
+      height: 12px;
+      background-color: #333;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #facc15;
+      transition: width 0.2s;
+    }
+
+    #episodeSelector {
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      z-index: 10000;
+      display: block;
+      max-width: 98%;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    #episodeSelector ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    #episodeSelector li {
+      padding: 10px 20px;
+      border: 2px solid #facc15;
+      border-radius: 8px;
+      background-color: #1f1f1f;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    #episodeSelector li.selected {
+      background-color: rgb(151, 151, 151);
+      color: white;
+    }
+
+    #playerUI {
+      position: absolute;
+      bottom: 5%;
+      left: 5%;
+      right: 5%;
+      background-color: rgba(0, 0, 0, 0);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: margin-bottom 2s;
+    }
+
+    #videoTitle {
+      font-size: 35px;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    #videoProgressContainer {
+      width: 100%;
+      height: 8px;
+      background-color: #444;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    #videoProgressBar {
+      width: 0%;
+      height: 100%;
+      background-color: #facc15;
+      transition: width 0.2s;
+    }
+    .seek-buttons {
+      gap: 10px;
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      justify-content: space-around;
+      flex-direction: row;
+      margin-bottom: 10px;
+      height: 50px;
+    }
+
+    .seek-buttons button {
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      padding: 8px 12px;
+      background-color: rgba(0, 0, 0, 0);
+    }
+    #timeDisplay {
+      font-size: 25px;
+    }
+    .seek-buttons button:focus {
+      background-color: #facc15;
+      color: black;
+      border-radius: 5px;
+    }
+    #episodeList li:focus {
+      background-color: #facc15;
+      color: black;
+    }
+    .seek-buttons div {
+      font-size: 30px;
+      width: 8%;
+      display: flex;
+      justify-content: space-around;
+      flex-direction: row;
+    }
+    .popup {
+      position: fixed;
+      top: 30%;
+      left: 20%;
+      width: 60%;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      z-index: 9999999;
+      font-size: 35px;
+    }
+    .popup button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 3px;
+    }
+    .popup button:focus {
+      background-color: #facc15;
+    }
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75); /* độ mờ */
+      z-index: 9998; /* dưới popup */
+    }
+    .popup-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* nền đen mờ */
+  display: none; /* Ẩn mặc định */
+  z-index: 9998;
+}
+
+/* Popup menu bên phải */
+.popupCC {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background-color: #fff;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  z-index: 9999;
+}
+
+/* Các nút trong popup */
+.popup-btn {
+  padding: 10px 20px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 32px;
+  transition: background 0.3s;
+  margin-bottom: 5px;
+}
+.popup-btn:focus {
+  background-color: #facc15;
+  color: #0f1115;
+}
+  </style>
+</head>
+<body>
+  <div id="overlay" style="display: none;"></div>
+  <div id="exit-popup" style="display: none;" class="popup">
+    <p>Bạn có chắc muốn thoát ứng dụng?</p>
+    <button class="btn-pop" onclick="confirmExit()">Thoát</button>
+    <button class="btn-pop" onclick="confirmReturn()">Trờ về</button>
+    <button class="btn-pop" onclick="cancelExit()">Hủy</button>
+  </div>
+  <div id="loader">
+    <div class="spinner"></div>
+    <p id="loadingText">Đang tải phim...</p>
+  </div>
+  <div id="popupWrapper" class="popup-wrapper">
+  <!-- Popup nội dung bên phải -->
+  <div class="popupCC">
+    <!-- <button class="popup-btn">Nút 1</button> -->
+  </div>
+</div>
+
+  <div id="playerUI" style="display: none;">
+    <div id="videoTitle"></div>
+    <div id="videoProgressContainer">
+      <div id="videoProgressBar"></div>
+    </div>
+    <div id="timeDisplay">00:00 / 00:00</div>
+    <div class="seek-buttons">
+      <button class="btn-sel" tabindex="0" onclick="seek(-300000)"><i class="fas fa-backward" style="margin-right: 10px;"></i> 5m</button>
+      <button class="btn-sel" tabindex="0" onclick="seek(-60000)"><i class="fas fa-backward" style="margin-right: 10px;"></i> 1m</button>
+      <button class="btn-sel" tabindex="0" onclick="seek(-10000)"><i class="fas fa-backward" style="margin-right: 10px;"></i> 10s</button>
+      <button class="btn-sel" tabindex="0" onclick="togglePlayPause()">
+        <i id="playPauseIcon" class="fas fa-pause"></i>
+      </button>
+      <button class="btn-sel" tabindex="0" onclick="seek(10000)">10s <i class="fas fa-forward" style="margin-left: 10px;"></i></button>
+      <button class="btn-sel" tabindex="0" onclick="seek(60000)">1m <i class="fas fa-forward" style="margin-left: 10px;"></i></button>
+      <button class="btn-sel" tabindex="0" onclick="seek(300000)">5m <i class="fas fa-forward" style="margin-left: 10px;"></i></button>
+      <div>
+        <button class="btn-sel" tabindex="0" onclick="chooseSub()"><i class="fas fa-closed-captioning"></i></button>
+        <button class="btn-sel" tabindex="0" onclick="timeSkip(-0.1)"><i class="fas fa-caret-left" style="margin-left: 10px;"></i></button>
+        <p style="margin-top: 5px;" id="textSkip">0</p>
+        <button class="btn-sel" tabindex="0" onclick="timeSkip(0.1)"><i class="fas fa-caret-right" style="margin-left: 10px;"></i></button>
+      </div>
+    </div>
+    <div id="episodeSelector">
+      <ul id="episodeList">
+        
+      </ul>
+    </div>
+  </div>
+  <div id="subtitle" style="
+    position: absolute;
+    bottom: 5%;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 42px;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: white;
+    -webkit-text-stroke: .04em black;
+    text-shadow: .04em .04em .04em rgba(0,0,0,.4);
+    z-index: 999;
+  ">Netflex - Dev By Hung Nguyen</div>
+  <object id="video" type="application/avplayer"></object>
+
+  <script src="watch.js"></script>
+</body>
+</html>

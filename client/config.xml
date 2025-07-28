@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://yourdomain/RoPhimTV" version="0.2.1" viewmodes="maximized">
+    <access origin="*" subdomains="true"></access>
+    <tizen:application id="6xcJ87TC0s.RoPhimTV" package="6xcJ87TC0s" required_version="2.3"/>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.large"/>
+    <icon src="VuZxDJYo_400x400.jpg"/>
+    <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"/>
+    <tizen:metadata key="http://tizen.org/metadata/app_ui_type/base_screen_resolution" value="extensive"/>
+    <name>RoPhimTV</name>
+    <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
+    <tizen:privilege name="http://tizen.org/privilege/filesystem.write"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+    <tizen:privilege name="http://tizen.org/privilege/avplay"/>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:profile name="tv-samsung"/>
+    <tizen:setting screen-orientation="landscape" context-menu="enable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+</widget>
